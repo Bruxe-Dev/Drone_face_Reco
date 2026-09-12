@@ -17,7 +17,7 @@ def enhance_frame(frame):
     enhanced = cv2.merge((l, a, b))
 
     return cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
-    
+
 name = input("Enter person's name: ")
 
 output_folder = os.path.join("data", name)
@@ -49,6 +49,7 @@ while True:
         break
 
     frame = cv2.flip(frame, 1)
+    frame = enhance_frame(frame)
 
     cv2.putText(
         frame,
