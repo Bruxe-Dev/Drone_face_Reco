@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Face datasets
+data/
+
+# Generated face encodings
+encodings/
+
+# Large ML models
+models/*.onnx
+
+# Captured images
+captured_faces/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
