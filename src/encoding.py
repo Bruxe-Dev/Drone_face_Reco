@@ -59,13 +59,13 @@ for person_name in os.listdir(DATASET_PATH):
             face
         )
 
-        embeddings = recognizer.feature(
+        embedding = recognizer.feature(
             align_face
         )
 
         known_faces.append({
             "name":person_name,
-            "embeddings":embeddings
+            "embedding":embedding
         })
 
         print(f"Encoded: {image_path}")
