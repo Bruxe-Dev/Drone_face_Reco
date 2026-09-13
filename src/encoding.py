@@ -73,7 +73,7 @@ for person_name in os.listdir(DATASET_PATH):
 os.makedirs("encodings", exist_ok=True)
 
 with open(OUTPUT_PATH, "wb") as file:
-    pickle.dump(known_faces, file)
+    pc.dump(known_faces, file)
 
 
 print("\n===========================")
