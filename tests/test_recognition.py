@@ -1,0 +1,1 @@
+from src.recognition import recognize_face
