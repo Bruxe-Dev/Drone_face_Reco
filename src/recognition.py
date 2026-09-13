@@ -41,7 +41,7 @@ def recognize_face(image,face):
     )
 
     embedding = recognizer.feature(
-        aligned_face
+        align_face
     )
 
     best_name = "Unknown"
