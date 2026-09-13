@@ -4,7 +4,6 @@ from detection import detector
 from recognition import recognize_face
 from speech import greet
 
-
 camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
 if not camera.isOpened():
