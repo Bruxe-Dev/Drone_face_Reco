@@ -1,5 +1,6 @@
 import cv2
 from recognition import recognize_face
+from speech import greet
 
 
 camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
@@ -12,6 +13,7 @@ if not camera.isOpened():
 print("Camera started!")
 print("Press Q to quit.")
 
+greeted_people = set()
 
 while True:
 
@@ -39,6 +41,11 @@ while True:
                 frame,
                 face
             )
+
+            if name != "Unknown" and name not in greeted_people:
+                greet(name)
+
+                greeted_people.add(name)
 
             x, y, w, h = face[:4]
 
