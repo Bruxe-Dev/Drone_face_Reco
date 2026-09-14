@@ -58,13 +58,13 @@ def register_person(cap,name,number_of_images=3):
                 key=lambda f: f[2] * f[3]
             )
 
-            embedding = get_embedding(frame, face)
+            emb = get_embedding(frame, face)
 
-            embedding.append(embedding)
+            embedding.append(emb)
 
             print(
                 f"Captured sample "
-                f"{len(embeddings)}/{number_of_images}"
+                f"{len(embedding)}/{number_of_images}"
             )
 
             time.sleep(1)
@@ -72,12 +72,12 @@ def register_person(cap,name,number_of_images=3):
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
-    cv2.destroyWindow("Face Registration")
+    cv2.destroyWindow("Face Recognition")
 
-    if len(embeddings) == number_of_images:
+    if len(embedding) == number_of_images:
 
-        for embedding in embeddings:
-            add_face(name, embedding)
+        for emb in embedding:
+            add_vectors(name, emb)
 
         print(f"\n{name} successfully registered!")
 
