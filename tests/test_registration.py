@@ -1,6 +1,6 @@
 import cv2
 
-from src.registratio import register_person
+from src.registration import register_person
 
 
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
