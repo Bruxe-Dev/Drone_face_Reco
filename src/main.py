@@ -1,3 +1,14 @@
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+if str(PROJECT_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
 import cv2
 
 from src.detection import detect_faces
@@ -78,7 +89,7 @@ while True:
             )
         )
 
-        x, y, w, h = target_face[:4]
+        x, y, w, h = (int(v) for v in target_face[:4])
 
         cv2.rectangle(
             frame,
