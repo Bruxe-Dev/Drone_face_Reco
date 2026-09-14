@@ -1,6 +1,6 @@
 import cv2
 
-from src.vector_store import search_face
+from vector_store import search_face
 
 
 SFACE_MODEL = "models/face_recognition_sface_2021dec.onnx"
