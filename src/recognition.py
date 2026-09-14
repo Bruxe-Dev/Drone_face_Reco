@@ -1,68 +1,31 @@
 import cv2
-import pickle as pc 
-import numpy as np 
 
-YUNET_PATH ="models/face_detection_yunet_2023mar.onnx"
-SFACE_PATH ="models/face_recognition_sface_2021dec.onnx"
+from src.vector_store import search_face
 
-ENCODING_PATH ="encodings/faces.pkl"
 
-detector = cv2.FaceDetectorYN.create(
-    model= YUNET_PATH,
-    config= "",
-    input_size= (320,320),
-    score_threshold= 0.9,
-    nms_threshold= 0.3,
-    top_k= 500
-)
+SFACE_MODEL = "models/face_recognition_sface_2021dec.onnx"
 
 recognizer = cv2.FaceRecognizerSF.create(
-    model= SFACE_PATH,
+    model = SFACE_MODEL,
     config= ""
 )
 
-with open(ENCODING_PATH, "rb") as file:
-    known_faces = pc.load(file)
 
-def cosine_similarity(a,b):
+def get_embedding(image, face):
+    aligned_face = recognizer.alignCrop(image, face)
+    embedding = recognizer.feature(aligned_face)
 
-    a = a.flatten()
-    b = b.flatten()
+    return embedding
 
-    return np.dot(a,b) / (
-        np.linalg.norm(a) * np.linalg.norm(b)
-    )
 
-def recognize_face(image,face):
+def recognize_face(image, face):
+    embedding = get_embedding(image, face)
 
-    align_face = recognizer.alignCrop(
-        image,
-        face
-    )
+    name, score = search_face(embedding)
 
-    embedding = recognizer.feature(
-        align_face
-    )
-
-    best_name = "Unknown"
-    best_score = -1
-
-    for known_face in known_faces:
-
-        score = cosine_similarity(
-            embedding,
-            known_face["embedding"]
-        )
-
-        if score > best_score:
-            best_score = score
-            best_name = known_face["name"]
-
-    # Recognition threshold
     threshold = 0.40
 
-    if best_score < threshold:
-        best_name = "Unknown"
+    if score < threshold:
+        name = "Unknown"
 
-
-    return best_name,best_score
+    return name, score
