@@ -4,7 +4,7 @@ import time
 from recognition import get_embedding
 from vector_store import add_vectors
 
-MODEL_PATH = "models/face_detection_yunet_2023mr.onnx"
+MODEL_PATH = "models/face_detection_yunet_2023mar.onnx"
 
 def register_person(cap,name,number_of_images=3):
     embedding = []
@@ -60,7 +60,7 @@ def register_person(cap,name,number_of_images=3):
 
             embedding = get_embedding(frame, face)
 
-            embeddings.append(embedding)
+            embedding.append(embedding)
 
             print(
                 f"Captured sample "
