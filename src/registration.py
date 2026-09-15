@@ -1,85 +1,105 @@
 import cv2
 import time
 
-from recognition import get_embedding
-from vector_store import add_vectors
+from src.detection import detect_faces
+from src.recognition import get_embedding
+from src.vector_store import add_face
 
-MODEL_PATH = "models/face_detection_yunet_2023mar.onnx"
 
-def register_person(cap,name,number_of_images=3):
-    embedding = []
+def register_person(cap, name, number_of_images=3):
+
+    embeddings = []
 
     print(f"\nRegistering {name}...")
     print(f"Capturing {number_of_images} face samples.")
     print("Look directly at the camera.\n")
 
-    while len(embedding) < number_of_images:
+    while len(embeddings) < number_of_images:
+
         success, frame = cap.read()
 
         if not success:
-            print("Could not read Camera Frame")
+            print("Could not read camera frame.")
             continue
 
-        frame = cv2.flip(frame,1)
+        frame = cv2.flip(frame, 1)
+
+        faces = detect_faces(frame)
 
         cv2.putText(
             frame,
-            f"Registering {name}",
-            (20,40),
+            f"Registering: {name}",
+            (20, 40),
             cv2.FONT_HERSHEY_SIMPLEX,
             1,
-            (0,255,255),
+            (0, 255, 0),
             2
         )
 
-        cv2.imshow(
-            "Face Recognition",frame
+        cv2.putText(
+            frame,
+            f"Samples: {len(embeddings)}/{number_of_images}",
+            (20, 75),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (0, 255, 0),
+            2
         )
-
-        detector = cv2.FaceDetectorYN.create(
-            MODEL_PATH,
-            "",
-            (320,320),
-            0.9,
-            0.3,
-            5000
-        )
-
-        height, width = frame.shape[:2]
-        detector.setInputSize((width,height))
-
-        _,faces = detector.detect(frame)
 
         if faces is not None and len(faces) > 0:
 
-            # Use the largest detected face
+            # Pick largest face
             face = max(
                 faces,
                 key=lambda f: f[2] * f[3]
             )
 
-            emb = get_embedding(frame, face)
+            x, y, w, h = face[:4]
 
-            embedding.append(emb)
+            cv2.rectangle(
+                frame,
+                (x, y),
+                (x + w, y + h),
+                (0, 255, 0),
+                2
+            )
+
+            embedding = get_embedding(
+                frame,
+                face
+            )
+
+            embeddings.append(embedding)
 
             print(
                 f"Captured sample "
-                f"{len(embedding)}/{number_of_images}"
+                f"{len(embeddings)}/{number_of_images}"
             )
 
             time.sleep(1)
 
+        cv2.imshow(
+            "Face Registration",
+            frame
+        )
+
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
-    cv2.destroyWindow("Face Recognition")
+    cv2.destroyWindow("Face Registration")
 
-    if len(embedding) == number_of_images:
+    if len(embeddings) == number_of_images:
 
-        for emb in embedding:
-            add_vectors(name, emb)
+        for embedding in embeddings:
 
-        print(f"\n{name} successfully registered!")
+            add_face(
+                name,
+                embedding
+            )
+
+        print(
+            f"\n{name} successfully registered!"
+        )
 
         return True
 
